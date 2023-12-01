@@ -24,6 +24,8 @@ public class Puzzle {
     private List<Question> questions = new ArrayList<>();
 
     private String message;
+
+    private String uniqueUrl;
 }
 
 

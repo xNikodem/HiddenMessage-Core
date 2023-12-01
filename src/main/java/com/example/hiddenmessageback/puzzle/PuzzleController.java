@@ -1,8 +1,10 @@
 package com.example.hiddenmessageback.puzzle;
 
 import com.example.hiddenmessageback.puzzle.question.Question;
+import com.example.hiddenmessageback.puzzle.question.QuestionDto;
 import com.example.hiddenmessageback.user.User;
 import com.example.hiddenmessageback.user.UserRepository;
+import com.example.hiddenmessageback.utils.UniqueUrlGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,9 @@ public class PuzzleController {
         puzzle.setUser(user);
         puzzle.setMessage(puzzleDto.getMessage());
 
+        String uniqueUrl = UniqueUrlGenerator.generate();
+        puzzle.setUniqueUrl(uniqueUrl);
+
         List<Question> questions = puzzleDto.getQuestions().stream()
                 .map(dto -> {
                     Question question = new Question();
@@ -51,8 +56,32 @@ public class PuzzleController {
 
         puzzleService.savePuzzleWithQuestions(puzzle);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(uniqueUrl);
     }
+    @GetMapping("/{uniqueUrl}")
+    public ResponseEntity<?> getPuzzleByUniqueUrl(@PathVariable String uniqueUrl) {
+        Puzzle puzzle = puzzleService.findByUniqueUrl(uniqueUrl);
+        PuzzleDto puzzleDto = convertToDto(puzzle);
+        return ResponseEntity.ok(puzzleDto);
+    }
+
+    public PuzzleDto convertToDto(Puzzle puzzle) {
+        PuzzleDto puzzleDto = new PuzzleDto();
+        puzzleDto.setMessage(puzzle.getMessage());
+
+        List<QuestionDto> questionDtos = puzzle.getQuestions().stream().map(question -> {
+            QuestionDto dto = new QuestionDto();
+            dto.setQuestion(question.getQuestion());
+            dto.setAnswer(question.getAnswer());
+            dto.setType(question.getType());
+            dto.setLength(question.getLength());
+            return dto;
+        }).collect(Collectors.toList());
+
+        puzzleDto.setQuestions(questionDtos);
+        return puzzleDto;
+    }
+
 
 }
 
