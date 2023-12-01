@@ -22,6 +22,8 @@ public class Puzzle {
 
     @OneToMany(mappedBy = "puzzle", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();
+
+    private String message;
 }
 
 

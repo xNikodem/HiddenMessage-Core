@@ -1,11 +1,9 @@
 package com.example.hiddenmessageback.puzzle;
 
-import com.example.hiddenmessageback.dto.PuzzleDto;
 import com.example.hiddenmessageback.puzzle.question.Question;
 import com.example.hiddenmessageback.user.User;
 import com.example.hiddenmessageback.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -36,6 +34,7 @@ public class PuzzleController {
 
         Puzzle puzzle = new Puzzle();
         puzzle.setUser(user);
+        puzzle.setMessage(puzzleDto.getMessage());
 
         List<Question> questions = puzzleDto.getQuestions().stream()
                 .map(dto -> {

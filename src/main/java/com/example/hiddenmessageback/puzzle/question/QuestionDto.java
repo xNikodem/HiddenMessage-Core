@@ -1,4 +1,4 @@
-package com.example.hiddenmessageback.dto;
+package com.example.hiddenmessageback.puzzle.question;
 
 import lombok.Data;
 
