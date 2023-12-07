@@ -1,7 +1,10 @@
 package com.example.hiddenmessageback.puzzle;
 
+import com.example.hiddenmessageback.dto.AnswerDto;
+import com.example.hiddenmessageback.dto.QuestionResponseDto;
 import com.example.hiddenmessageback.puzzle.question.Question;
 import com.example.hiddenmessageback.puzzle.question.QuestionDto;
+import com.example.hiddenmessageback.puzzle.question.QuestionService;
 import com.example.hiddenmessageback.user.User;
 import com.example.hiddenmessageback.user.UserRepository;
 import com.example.hiddenmessageback.utils.UniqueUrlGenerator;
@@ -22,11 +25,13 @@ public class PuzzleController {
 
     private final PuzzleService puzzleService;
     private final UserRepository userRepository;
+   private final QuestionService questionService;
 
     @Autowired
-    public PuzzleController(PuzzleService puzzleService, UserRepository userRepository) {
+    public PuzzleController(PuzzleService puzzleService, UserRepository userRepository, QuestionService questionService) {
         this.puzzleService = puzzleService;
         this.userRepository = userRepository;
+        this.questionService = questionService;
     }
 
     @PostMapping
@@ -81,7 +86,37 @@ public class PuzzleController {
         puzzleDto.setQuestions(questionDtos);
         return puzzleDto;
     }
+    @GetMapping("/{uniqueUrl}/next-question")
+    public ResponseEntity<QuestionResponseDto> getNextQuestion(@PathVariable String uniqueUrl, @RequestHeader("Correct-Answers-Count") int correctAnswersCount) {
+        Puzzle puzzle = puzzleService.findByUniqueUrl(uniqueUrl);
+        if (correctAnswersCount >= puzzle.getQuestions().size()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        Question nextQuestion = puzzle.getQuestions().get(correctAnswersCount);
+        QuestionResponseDto responseDto = new QuestionResponseDto();
+        responseDto.setQuestionId(nextQuestion.getId());
+        responseDto.setQuestion(nextQuestion.getQuestion());
+        responseDto.setType(nextQuestion.getType());
+        responseDto.setLength(nextQuestion.getLength());
+        return ResponseEntity.ok(responseDto);
+    }
 
+
+    @PostMapping("/{uniqueUrl}/check-answer")
+    public ResponseEntity<Boolean> checkAnswer(@PathVariable String uniqueUrl, @RequestBody AnswerDto answerDto) {
+        Question question = questionService.findById(answerDto.getQuestionId());
+        boolean isCorrect = question.getAnswer().equals(answerDto.getAnswer());
+        return ResponseEntity.ok(isCorrect);
+    }
+
+    @GetMapping("/{uniqueUrl}/message")
+    public ResponseEntity<String> getPuzzleMessage(@PathVariable String uniqueUrl) {
+        Puzzle puzzle = puzzleService.findByUniqueUrl(uniqueUrl);
+        if (puzzle == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(puzzle.getMessage());
+    }
 
 }
 

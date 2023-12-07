@@ -53,7 +53,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/api/puzzles/{uniqueId}/**").permitAll() // Dodaj ścieżkę, która nie wymaga uwierzytelnienia
+                        .requestMatchers("/api/auth/**", "/api/puzzles/{uniqueId}/**").permitAll()
                         .anyRequest().authenticated())
                 .cors(withDefaults());
 
