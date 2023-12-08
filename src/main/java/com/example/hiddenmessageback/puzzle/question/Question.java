@@ -20,7 +20,7 @@ public class Question {
     @Column(nullable = true)
     private Integer length;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "puzzle_id")
     private Puzzle puzzle;
 

@@ -17,6 +17,10 @@ public class PuzzleService {
         this.questionRepository = questionRepository;
     }
 
+    public Puzzle findByUniqueUrl(String uniqueUrl) {
+        return puzzleRepository.findByUniqueUrl(uniqueUrl);
+    }
+
     public void savePuzzleWithQuestions(Puzzle puzzle) {
         Puzzle savedPuzzle = puzzleRepository.save(puzzle);
         for(Question question : puzzle.getQuestions()) {
