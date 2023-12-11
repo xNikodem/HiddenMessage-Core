@@ -23,6 +23,7 @@ public class Puzzle {
     @OneToMany(mappedBy = "puzzle", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();
 
+    @Column(columnDefinition = "text")
     private String message;
 
     private String uniqueUrl;

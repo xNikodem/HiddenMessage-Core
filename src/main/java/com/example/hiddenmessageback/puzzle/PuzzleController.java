@@ -90,7 +90,7 @@ public class PuzzleController {
     public ResponseEntity<QuestionResponseDto> getNextQuestion(@PathVariable String uniqueUrl, @RequestHeader("Correct-Answers-Count") int correctAnswersCount) {
         Puzzle puzzle = puzzleService.findByUniqueUrl(uniqueUrl);
         if (correctAnswersCount >= puzzle.getQuestions().size()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.SEE_OTHER).build();
         }
         Question nextQuestion = puzzle.getQuestions().get(correctAnswersCount);
         QuestionResponseDto responseDto = new QuestionResponseDto();
