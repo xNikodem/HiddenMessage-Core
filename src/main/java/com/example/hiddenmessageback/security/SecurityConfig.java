@@ -44,7 +44,6 @@ public class SecurityConfig {
         return http.getSharedObject(AuthenticationManagerBuilder.class).build();
     }
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -54,7 +53,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/puzzles/{uniqueId}/**").permitAll()
                         .anyRequest().authenticated())
                 .cors(withDefaults());
 
@@ -62,4 +61,5 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 }

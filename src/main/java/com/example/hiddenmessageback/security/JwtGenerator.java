@@ -1,8 +1,6 @@
 package com.example.hiddenmessageback.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -41,8 +39,16 @@ public class JwtGenerator {
         try {
             Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(token);
             return true;
-        } catch (Exception ex) {
-            throw new AuthenticationCredentialsNotFoundException("JWT expired or incorrect");
+        } catch (ExpiredJwtException e) {
+            throw new AuthenticationCredentialsNotFoundException("JWT expired");
+        } catch (MalformedJwtException e) {
+            throw new AuthenticationCredentialsNotFoundException("Malformed JWT");
+        } catch (UnsupportedJwtException e) {
+            throw new AuthenticationCredentialsNotFoundException("Unsupported JWT");
+        } catch (SignatureException e) {
+            throw new AuthenticationCredentialsNotFoundException("Invalid JWT signature");
+        } catch (Exception e) {
+            throw new AuthenticationCredentialsNotFoundException("JWT authentication failed");
         }
     }
 }
